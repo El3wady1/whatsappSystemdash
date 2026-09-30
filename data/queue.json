@@ -1,0 +1,71 @@
+{
+  "jobs": [
+    {
+      "id": "ad285991-babe-4651-ab1a-7d099eae3d39",
+      "phone": "966599417209",
+      "name": "mahmoud",
+      "message": "هلا احمد",
+      "status": "sent",
+      "attempts": 1,
+      "overrideCooldown": false,
+      "createdAt": 1790771650256,
+      "sentAt": 1790771653058,
+      "finishedAt": 1790771653058,
+      "error": null
+    },
+    {
+      "id": "d78fb8f4-0a19-4135-a2a7-6a039c9a2659",
+      "phone": "966966599417209",
+      "name": "mahmoud",
+      "message": "klknln",
+      "status": "skipped",
+      "attempts": 0,
+      "overrideCooldown": false,
+      "createdAt": 1790771813203,
+      "sentAt": null,
+      "finishedAt": 1790771814603,
+      "error": "الرقم غير مسجل على واتساب"
+    },
+    {
+      "id": "0d883752-a72a-4692-810f-8744a4bafffe",
+      "phone": "9660599417209",
+      "name": "mahmoud",
+      "message": "hiklh",
+      "status": "sent",
+      "attempts": 1,
+      "overrideCooldown": false,
+      "createdAt": 1790771831647,
+      "sentAt": 1790771834033,
+      "finishedAt": 1790771834033,
+      "error": null
+    },
+    {
+      "id": "97bc9431-7e60-45a0-9f19-ead6c311be6a",
+      "phone": "9660599417209",
+      "name": "علي",
+      "message": "ميميميميممي",
+      "status": "sent",
+      "attempts": 1,
+      "overrideCooldown": false,
+      "senderIp": "::1",
+      "createdAt": 1790774575130,
+      "sentAt": 1790774577859,
+      "finishedAt": 1790774577859,
+      "error": null
+    },
+    {
+      "id": "f346b94f-84cc-4051-9214-37014982b98f",
+      "phone": "966599417209",
+      "name": null,
+      "message": "🔐 كود تأكيد تغيير كلمة المرور: 998736\nصالح لمدة 10 دقائق. إذا لم تطلب ذلك تجاهل الرسالة.",
+      "status": "sent",
+      "attempts": 1,
+      "overrideCooldown": true,
+      "senderIp": "::1",
+      "createdAt": 1790774611937,
+      "sentAt": 1790774614508,
+      "finishedAt": 1790774614508,
+      "error": null
+    }
+  ]
+}

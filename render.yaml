@@ -1,0 +1,32 @@
+# Blueprint: WhatsApp Backend (Web Service + Docker + Disk)
+# في Render: New → Blueprint → اختر ريبو whatsappSystemBE
+services:
+  - type: web
+    name: whatsapp-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter # القرص الدائم يتطلب خطة مدفوعة
+    healthCheckPath: /health
+    disk:
+      name: wa-data
+      mountPath: /app/persist
+      sizeGB: 1
+    envVars:
+      - key: HEADLESS
+        value: true
+      - key: NODE_OPTIONS # سقف ذاكرة Node ليبقى مجال لـ Chromium ضمن 512MB
+        value: --max-old-space-size=256
+      - key: AUTH_DIR # الجلسة على القرص الدائم (لا تعيد مسح QR بعد إعادة التشغيل)
+        value: /app/persist/auth
+      - key: DATA_DIR # الطابور والإحصائيات على القرص الدائم
+        value: /app/persist/data
+      - key: ADMIN_NOTIFY_NUMBER
+        value: 0599417209
+      - key: MONGODB_URI
+        sync: false # املأها يدوياً في لوحة Render
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true

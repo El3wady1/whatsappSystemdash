@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة إرسال واتساب</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== شاشة الدخول ===== -->
+  <div id="loginScreen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="login-logo">📲</div>
+      <h1>لوحة إرسال واتساب</h1>
+      <p class="muted">سجل الدخول للمتابعة</p>
+
+      <label class="label">الإيميل</label>
+      <input id="loginEmail" class="input" type="email" dir="ltr" placeholder="admin@example.com" />
+
+      <label class="label">كلمة المرور</label>
+      <input id="loginPassword" class="input" type="password" dir="ltr" placeholder="••••••••" />
+
+      <button id="loginBtn" class="btn btn-primary">دخول</button>
+      <button id="forgotLink" class="link-btn">نسيت كلمة المرور؟</button>
+      <div id="forgotPane" class="hidden">
+        <label class="label">الإيميل</label>
+        <input id="forgotEmail" class="input" type="email" dir="ltr" placeholder="admin@example.com" />
+        <button id="forgotReqBtn" class="btn btn-small btn-go" style="width:100%;margin-top:8px">إرسال كود الاستعادة واتساب</button>
+        <div id="forgotStep2" class="hidden">
+          <label class="label">كود الاستعادة (6 أرقام)</label>
+          <input id="forgotCode" class="input" dir="ltr" maxlength="6" placeholder="123456" />
+          <label class="label">كلمة المرور الجديدة (6+ أحرف)</label>
+          <input id="forgotNewPw" class="input" type="password" dir="ltr" placeholder="••••••••" />
+          <button id="forgotConfirmBtn" class="btn btn-small btn-go" style="width:100%;margin-top:8px">تعيين كلمة المرور</button>
+        </div>
+        <div id="forgotMsg" class="result hidden"></div>
+      </div>
+      <div id="loginMsg" class="result hidden"></div>
+    </div>
+  </div>
+
+  <!-- ===== اللوحة ===== -->
+  <div id="dashboard" class="container hidden">
+    <div class="topbar">
+      <span id="userChip" class="user-chip">👤</span>
+      <div class="topbar-actions">
+        <button id="refreshAllBtn" class="btn btn-small">🔄 تحديث</button>
+        <button id="pwBtn" class="btn btn-small">🔑 تغيير كلمة المرور</button>
+        <button id="logoutBtnTop" class="btn btn-small">خروج</button>
+      </div>
+    </div>
+
+    <header class="header">
+      <h1>📲 لوحة إرسال واتساب</h1>
+      <div id="statusBadge" class="badge disconnected">
+        <span class="dot"></span>
+        <span id="statusText">🔴 غير متصل</span>
+      </div>
+      <div id="alertBox" class="alert hidden"></div>
+      <div id="srvState" class="srv-state">جارٍ الاتصال بالسيرفر...</div>
+    </header>
+
+    <div class="layout">
+      <!-- التنقل -->
+      <aside class="sidebar">
+        <button class="nav-link active" data-view="home">🏠 الرئيسية</button>
+        <button class="nav-link" data-view="send">✉️ إرسال</button>
+        <button class="nav-link" data-view="queue">📦 الطابور <span id="navQueueCount" class="nav-count hidden">0</span></button>
+        <button class="nav-link" data-view="logs">📊 السجل</button>
+        <button class="nav-link" data-view="settings">⚙️ الإعدادات</button>
+        <button class="nav-link" data-view="api">🔌 API</button>
+      </aside>
+
+      <!-- الأقسام -->
+      <div class="content">
+
+        <!-- الرئيسية -->
+        <section class="view" id="view-home">
+          <div class="card">
+            <h2>اتصال واتساب</h2>
+            <div id="qrWrapper" class="qr-wrapper hidden">
+              <p class="hint">امسح QR من تطبيق واتساب:<br><b>الإعدادات ← الأجهزة المرتبطة ← ربط جهاز</b></p>
+          <img id="qrImage" alt="WhatsApp QR Code" />
+          <p class="qr-note">يتحدث QR تلقائياً بدون تحديث الصفحة</p>
+          <p id="qrAge" class="qr-note"></p>
+            </div>
+            <div id="connectedBox" class="connected-box hidden">
+              <div class="big-ok">✅</div>
+              <p><b>واتساب متصل</b></p>
+              <p class="muted">الطابور يعمل — يمكنك إضافة رسائل</p>
+            </div>
+            <div id="connectingBox" class="connecting-box">
+              <div class="spinner"></div>
+              <p id="connectingText">جاري الاتصال بواتساب...</p>
+            </div>
+            <p id="lastDrop" class="muted"></p>
+            <button id="logoutBtn" class="btn btn-danger">تسجيل الخروج من واتساب</button>
+          </div>
+
+          <div class="card">
+            <h2>إجراءات سريعة</h2>
+            <div class="btn-row">
+              <button id="quickSend" class="btn btn-small btn-go">➕ رسالة جديدة</button>
+              <button id="quickToggle" class="btn btn-small">⏸ إيقاف / ▶ استئناف الطابور</button>
+              <button id="quickLogs" class="btn btn-small">📊 عرض السجل</button>
+            </div>
+            <div class="backend-row">
+              <span>🔗 الباك إند:</span>
+              <input id="apiBaseEdit" class="input" dir="ltr" />
+              <button id="apiBaseSave" class="btn btn-small">حفظ وإعادة اتصال</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- إرسال -->
+        <section class="view hidden" id="view-send">
+          <div class="card">
+            <h2>إرسال رسالة (تضاف للطابور)</h2>
+            <p class="warn-box">⚠️ أرسل فقط لأشخاص وافقوا على استلام رسائلك. الإرسال العشوائي يعرض رقمك للحظر.</p>
+
+            <div class="tabs">
+              <button id="tabSingle" class="tab active">رسالة واحدة</button>
+              <button id="tabBulk" class="tab">رسائل متعددة بأسماء</button>
+            </div>
+
+            <div id="singlePane">
+              <label class="label">مفتاح الدولة</label>
+              <select id="countryCode" class="input">
+                <option value="966" selected>🇸🇦 السعودية +966</option>
+                <option value="971">🇦🇪 الإمارات +971</option>
+                <option value="965">🇰🇼 الكويت +965</option>
+                <option value="974">🇶🇦 قطر +974</option>
+                <option value="973">🇧🇭 البحرين +973</option>
+                <option value="968">🇴🇲 عمان +968</option>
+                <option value="962">🇯🇴 الأردن +962</option>
+                <option value="20">🇪🇬 مصر +20</option>
+                <option value="212">🇲🇦 المغرب +212</option>
+                <option value="213">🇩🇿 الجزائر +213</option>
+                <option value="216">🇹🇳 تونس +216</option>
+                <option value="961">🇱🇧 لبنان +961</option>
+                <option value="963">🇸🇾 سوريا +963</option>
+                <option value="964">🇮🇶 العراق +964</option>
+                <option value="967">🇾🇪 اليمن +967</option>
+                <option value="249">🇸🇩 السودان +249</option>
+              </select>
+
+              <label class="label">رقم الجوال</label>
+              <input id="phoneInput" class="input" type="tel" dir="ltr" placeholder="501234567" maxlength="15" />
+
+              <label class="label">اسم المستلم (يُستخدم مع ‎{name}‎ لتخصيص رسالته)</label>
+              <input id="nameInput" class="input" type="text" placeholder="مثال: محمد" maxlength="60" />
+
+              <label class="label">نص الرسالة (يمكنك استخدام ‎{name}‎)</label>
+              <textarea id="messageInput" class="input textarea" rows="4" maxlength="1000" placeholder="مثال: مرحباً {name}، هذا تذكير بموعدك غداً"></textarea>
+              <div class="counter"><span id="charCount">0</span> / 1000 حرف</div>
+
+              <label class="check-row">
+                <input type="checkbox" id="overrideCooldown" />
+                تجاوز منع التكرار (مراسلة نفس الرقم قبل 24 ساعة — غير مستحسن)
+              </label>
+
+              <button id="sendBtn" class="btn btn-primary" disabled>إضافة للطابور</button>
+            </div>
+
+            <div id="bulkPane" class="hidden">
+              <label class="label">قالب الرسالة (يُخصص ‎{name}‎ لكل شخص باسمه)</label>
+              <textarea id="bulkTemplate" class="input textarea" rows="3" maxlength="1000" placeholder="مثال: مرحباً {name}، شكراً لثقتكم بنا 🌟"></textarea>
+              <div class="counter"><span id="bulkCharCount">0</span> / 1000 حرف</div>
+
+              <label class="label">المستلمون (سطر لكل شخص: الرقم,الاسم — حتى 50)</label>
+              <textarea id="bulkList" class="input textarea" rows="5" dir="ltr" placeholder="966501234567,محمد&#10;966509876543,سارة&#10;966500000001,بدون اسم"></textarea>
+
+              <label class="check-row">
+                <input type="checkbox" id="bulkOverride" />
+                تجاوز منع التكرار للكل
+              </label>
+
+              <button id="bulkBtn" class="btn btn-primary" disabled>إضافة الكل للطابور</button>
+            </div>
+
+            <div id="loading" class="loading hidden">
+              <div class="spinner"></div>
+              <span>جاري الإضافة للطابور...</span>
+            </div>
+            <div id="resultMsg" class="result hidden"></div>
+          </div>
+        </section>
+
+        <!-- الطابور -->
+        <section class="view hidden" id="view-queue">
+          <div class="card">
+            <h2>الطابور والحدود</h2>
+            <div id="queuePaused" class="result error hidden"></div>
+
+            <div class="stats-grid">
+              <div class="stat">
+                <span class="stat-num" id="statDay">0 / 0</span>
+                <span class="stat-label">مرسل اليوم / السقف</span>
+                <div class="bar"><div id="barDay" class="bar-fill"></div></div>
+              </div>
+              <div class="stat">
+                <span class="stat-num" id="statHour">0 / 0</span>
+                <span class="stat-label">مرسل الساعة / السقف</span>
+                <div class="bar"><div id="barHour" class="bar-fill"></div></div>
+              </div>
+              <div class="stat">
+                <span class="stat-num" id="statQueued">0</span>
+                <span class="stat-label">في الطابور</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num" id="statNext">—</span>
+                <span class="stat-label">الإرسال التالي بعد</span>
+              </div>
+            </div>
+            <p id="warmupNote" class="muted"></p>
+            <p id="capWarn" class="warn-box hidden"></p>
+
+            <div class="btn-row">
+              <button id="pauseBtn" class="btn btn-small">⏸ إيقاف مؤقت</button>
+              <button id="resumeBtn" class="btn btn-small btn-go">▶ استئناف</button>
+              <button id="clearBtn" class="btn btn-small">🗑 مسح المعلقة</button>
+              <button id="stopBtn" class="btn btn-small btn-danger">⛔ إيقاف طارئ</button>
+            </div>
+
+            <h3>الرسائل المعلقة</h3>
+            <div class="table-wrap">
+              <table class="tbl">
+                <thead><tr><th>#</th><th>الرقم</th><th>الاسم</th><th>الرسالة</th></tr></thead>
+                <tbody id="pendingBody"><tr><td colspan="4" class="muted">لا توجد رسائل معلقة</td></tr></tbody>
+              </table>
+            </div>
+
+            <h3>آخر 50 رسالة</h3>
+            <div class="table-wrap">
+              <table class="tbl">
+                <thead><tr><th>الرقم</th><th>الرسالة</th><th>الحالة</th><th>ملاحظة</th></tr></thead>
+                <tbody id="historyBody"><tr><td colspan="4" class="muted">لا يوجد سجل بعد</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- السجل -->
+        <section class="view hidden" id="view-logs">
+          <div class="card">
+            <h2>📊 سجل الرسائل <span id="dbBadge" class="db-badge off">DB: غير متصل</span></h2>
+            <div class="stats-grid">
+              <div class="stat">
+                <span class="stat-num" id="logTotal">0</span>
+                <span class="stat-label">إجمالي المُرسل</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num" id="logToday">0</span>
+                <span class="stat-label">مُرسل اليوم</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num" id="logFailed">0</span>
+                <span class="stat-label">فشل</span>
+              </div>
+            </div>
+            <div class="optout-row">
+              <select id="logFilter" class="input" style="max-width:160px">
+                <option value="">كل الحالات</option>
+                <option value="sent">تم الإرسال</option>
+                <option value="failed">فشل</option>
+                <option value="skipped">تُجاوز</option>
+              </select>
+              <input id="logSearch" class="input" placeholder="بحث برقم أو اسم..." />
+              <button id="logRefreshBtn" class="btn btn-small">تحديث</button>
+              <button id="logClearBtn" class="btn btn-small btn-danger">🗑 مسح السجل</button>
+            </div>
+            <div class="table-wrap">
+              <table class="tbl">
+                <thead><tr><th>إلى (الرقم)</th><th>الاسم</th><th>الرسالة المُرسلة</th><th>الحالة</th><th>الوقت</th><th>حذف</th></tr></thead>
+                <tbody id="logsBody"><tr><td colspan="6" class="muted">لا يوجد سجل — فعّل MongoDB لحفظ السجل الدائم</td></tr></tbody>
+              </table>
+            </div>
+            <div class="pager">
+              <button id="logPrev" class="btn btn-small">→ السابق</button>
+              <span id="logPage" class="muted">صفحة 1</span>
+              <button id="logNext" class="btn btn-small">التالي ←</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- الإعدادات -->
+        <section class="view hidden" id="view-settings">
+          <div class="card">
+            <h2>⚙️ الإعدادات <span class="muted" style="font-size:.8rem">(تُحفظ في MongoDB وتُطبق فوراً)</span></h2>
+            <div id="settingsForm" class="settings-grid"><p class="muted">جاري تحميل الإعدادات...</p></div>
+            <div class="btn-row">
+              <button id="settingsSaveBtn" class="btn btn-small btn-go">💾 حفظ الإعدادات</button>
+            </div>
+            <div id="settingsMsg" class="result hidden"></div>
+          </div>
+
+          <div class="card">
+            <h2>قائمة الإيقاف (Opt-out)</h2>
+            <p class="muted">من يرد بكلمة «إيقاف» أو «STOP» يُضاف هنا تلقائياً ولا تُرسل له رسائل مجدداً.</p>
+            <div class="optout-row">
+              <input id="optoutInput" class="input" type="tel" dir="ltr" placeholder="9665xxxxxxxx" />
+              <button id="optoutAddBtn" class="btn btn-small">إضافة</button>
+              <button id="optoutRefreshBtn" class="btn btn-small">تحديث</button>
+            </div>
+            <ul id="optoutList" class="optout-list"><li class="muted">جاري التحميل...</li></ul>
+          </div>
+        </section>
+
+        <!-- API -->
+        <section class="view hidden" id="view-api">
+          <div class="card">
+            <h2>🔌 API للتطبيقات</h2>
+            <p class="muted">انسخ البيانات والروابط واستخدمها في تطبيقك الخارجي. كل الطلبات (عدا الدخول) تحتاج الهيدر: <code class="inline">Authorization: Bearer TOKEN</code></p>
+            <div class="api-creds">
+              <div>
+                <label class="label">رابط الباك إند (BASE)</label>
+                <div class="copy-row"><input id="apiBaseView" class="input" dir="ltr" readonly /><button class="btn btn-small" data-copy="apiBaseView">نسخ</button></div>
+              </div>
+              <div>
+                <label class="label">التوكن (TOKEN) ⚠️ لا تشاركه</label>
+                <div class="copy-row"><input id="apiTokenView" class="input" dir="ltr" type="password" readonly /><button id="tokenShowBtn" class="btn btn-small">إظهار</button><button class="btn btn-small" data-copy="apiTokenView">نسخ</button></div>
+              </div>
+            </div>
+            <div id="apiList" class="api-list"></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="footer">يعمل عبر whatsapp-web.js — بدون أي API مدفوع • الأرقام مخفية جزئياً في سجلات السيرفر</footer>
+  </div>
+
+  <!-- ===== نافذة تغيير كلمة المرور ===== -->
+  <div id="pwModal" class="modal hidden">
+    <div class="modal-card">
+      <h2>🔑 تغيير كلمة المرور</h2>
+      <p class="muted">سيصلك كود تأكيد عبر واتساب على رقم المدير.</p>
+      <div id="pwStep1">
+        <label class="label">كلمة المرور الجديدة (6 أحرف على الأقل)</label>
+        <input id="newPassword" class="input" type="password" dir="ltr" placeholder="••••••••" />
+        <button id="otpRequestBtn" class="btn btn-primary">إرسال كود التأكيد</button>
+      </div>
+      <div id="pwStep2" class="hidden">
+        <p class="muted" id="otpSentTo"></p>
+        <label class="label">كود التأكيد (6 أرقام)</label>
+        <input id="otpCode" class="input" dir="ltr" maxlength="6" placeholder="123456" />
+        <button id="otpConfirmBtn" class="btn btn-primary">تأكيد التغيير</button>
+      </div>
+      <div id="pwMsg" class="result hidden"></div>
+      <button id="pwClose" class="btn btn-small">إغلاق</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
