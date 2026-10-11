@@ -470,6 +470,8 @@ function setStatus(status) {
   const bulkBtn = document.getElementById("bulkBtn");
   if (bulkBtn) bulkBtn.disabled = !ready;
   qrWrapper.classList.toggle("hidden", status !== "qr");
+  const pairBox = document.getElementById("pairBox");
+  if (pairBox) pairBox.classList.toggle("hidden", ready || status === "authenticated");
   connectedBox.classList.toggle("hidden", !ready);
   connectingBox.classList.toggle("hidden", status !== "connecting" && status !== "authenticated");
   // زر تسجيل الخروج ظاهر دائماً (يعمل حتى بدون اتصال — يمسح الجلسة ويولّد QR جديد)
@@ -802,6 +804,37 @@ logoutBtn.addEventListener("click", async () => {
     showResult(data.success, (data.success ? "✅ " : "❌ ") + data.message);
   } catch (e) {
     showResult(false, "❌ " + e.message);
+  }
+});
+
+// ===== الربط بكود رقمي (بديل QR بدون كاميرا) =====
+document.getElementById("pairBtn").addEventListener("click", async () => {
+  const phoneEl = document.getElementById("pairPhone");
+  const codeEl = document.getElementById("pairCode");
+  const msgEl = document.getElementById("pairMsg");
+  const btn = document.getElementById("pairBtn");
+  const phone = (phoneEl.value || "").replace(/[\s+\-()]/g, "");
+  codeEl.classList.add("hidden");
+  msgEl.textContent = "";
+  if (!/^\d{7,15}$/.test(phone)) {
+    msgEl.textContent = "⚠️ أدخل رقمك بالصيغة الدولية (مثال: 9665XXXXXXXX).";
+    return;
+  }
+  btn.disabled = true;
+  try {
+    const res = await apiFetch("/api/whatsapp/pairing", {
+      method: "POST",
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+    codeEl.textContent = data.code;
+    codeEl.classList.remove("hidden");
+    msgEl.textContent = "✅ " + data.message;
+  } catch (e) {
+    msgEl.textContent = "❌ " + e.message;
+  } finally {
+    btn.disabled = false;
   }
 });
 

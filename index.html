@@ -85,6 +85,15 @@
           <p class="qr-note">يتحدث QR تلقائياً بدون تحديث الصفحة</p>
           <p id="qrAge" class="qr-note"></p>
             </div>
+            <div id="pairBox" class="pair-box">
+              <p class="hint">أو اربط <b>بدون كاميرا</b> بكود رقمي:<br>واتساب ← الإعدادات ← الأجهزة المرتبطة ← ربط جهاز ← <b>الربط برقم الهاتف</b></p>
+              <div class="backend-row">
+                <input id="pairPhone" class="input" dir="ltr" placeholder="9665XXXXXXXX" inputmode="numeric" />
+                <button id="pairBtn" class="btn btn-small">📲 طلب كود الربط</button>
+              </div>
+              <div id="pairCode" class="pair-code hidden" dir="ltr"></div>
+              <p id="pairMsg" class="qr-note"></p>
+            </div>
             <div id="connectedBox" class="connected-box hidden">
               <div class="big-ok">✅</div>
               <p><b>واتساب متصل</b></p>
